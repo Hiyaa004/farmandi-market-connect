@@ -25,7 +25,7 @@ const NotFound = () => {
           The page you are looking for might have been moved, deleted, 
           or perhaps never existed in our farm.
         </p>
-        <Button asChild variant="primary">
+        <Button asChild variant="default">
           <Link to="/">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Homepage
           </Link>
