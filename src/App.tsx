@@ -17,6 +17,7 @@ import Help from "./pages/help/Help";
 import UserTypeSelection from "./pages/auth/UserTypeSelection";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 // Farmer Pages
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
@@ -58,6 +59,7 @@ const App = () => {
             <Route path="/auth/user-type" element={<UserTypeSelection />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/signup" element={<Signup />} />
+            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
             
             {/* Farmer Routes */}
             <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
