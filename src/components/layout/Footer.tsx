@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
@@ -11,7 +10,7 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-4">
-              <img src="/logo.svg" alt="Farmandi" className="h-10 w-10" />
+              <img src="/logo.svg" alt="Farmandi" className="h-10" />
               <h2 className="font-bold text-xl">Farmandi</h2>
             </Link>
             <p className="text-sm mb-4">
