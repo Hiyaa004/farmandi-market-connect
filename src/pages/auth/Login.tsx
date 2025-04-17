@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,10 +13,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    // Get user type from localStorage
     const storedUserType = localStorage.getItem('userType') as 'farmer' | 'customer' | null;
     if (!storedUserType) {
-      // If no user type selected, redirect to selection page
       navigate('/auth/user-type');
     } else {
       setUserType(storedUserType);
@@ -26,10 +23,8 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, you would handle authentication here
     console.log('Login attempt:', { email, password, userType });
     
-    // Redirect to appropriate dashboard
     if (userType === 'farmer') {
       navigate('/farmer/dashboard');
     } else {
@@ -59,7 +54,7 @@ const Login = () => {
 
           <div className="text-center mb-8">
             <Link to="/" className="inline-block">
-              <img src="/logo.svg" alt="Farmandi" className="h-16 w-16 mx-auto" />
+              <img src="/logo.svg" alt="Farmandi" className="h-16 mx-auto" />
             </Link>
             <h1 className="text-2xl font-bold text-farmandi-brown mt-4">
               {userType === 'farmer' ? 'Farmer Login' : 'Customer Login'}

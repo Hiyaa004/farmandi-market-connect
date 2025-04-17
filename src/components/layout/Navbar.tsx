@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -23,7 +24,6 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img src="/logo.svg" alt="Farmandi" className="h-10" />
-            <span className="ml-2 text-xl font-bold text-farmandi-green">Farmandi</span>
           </Link>
 
           {/* Desktop Navigation */}
