@@ -52,6 +52,21 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				farmandi: {
+					green: {
+						light: '#8BC34A',
+						DEFAULT: '#4CAF50',
+						dark: '#2E7D32'
+					},
+					brown: {
+						light: '#A1887F',
+						DEFAULT: '#795548',
+						dark: '#5D4037'
+					},
+					cream: '#F9F5EB',
+					earth: '#8D6E63',
+					gold: '#FFC107'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
