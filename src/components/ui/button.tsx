@@ -19,10 +19,10 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        // Add the custom variants
+        // Custom variants
         farmer: "bg-farmandi-green text-white hover:bg-farmandi-green/90",
         customer: "bg-farmandi-brown text-white hover:bg-farmandi-brown/90",
-        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
+        primary: "bg-farmandi-green text-white hover:bg-farmandi-green/90",
       },
       size: {
         default: "h-10 px-4 py-2",
