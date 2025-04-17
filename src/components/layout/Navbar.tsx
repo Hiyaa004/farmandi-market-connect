@@ -23,7 +23,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src="/logo.svg" alt="Farmandi" className="h-10" />
+            <img src="/logo.svg" alt="Farmandi" className="h-10 w-10" />
+            <span className="ml-2 text-xl font-bold text-farmandi-green">Farmandi</span>
           </Link>
 
           {/* Desktop Navigation */}
