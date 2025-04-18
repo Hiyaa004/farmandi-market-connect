@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Menu, X, User, Heart, Settings, Package, LogOut, Bell, CreditCard, History } from 'lucide-react';
+import { ShoppingBag, Menu, X, User, Heart, Settings, Package, LogOut, Bell, CreditCard, History, Home } from 'lucide-react';
 import { 
   Sheet, 
   SheetContent, 
@@ -39,12 +39,10 @@ const Navbar = () => {
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <Link to="/" className="flex items-center">
             <img src="/logo.svg" alt="Farmandi" className="h-10 w-10" />
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link 
               to="/products" 
@@ -72,7 +70,6 @@ const Navbar = () => {
             </Link>
           </nav>
 
-          {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <Button 
               variant="ghost" 
@@ -222,7 +219,6 @@ const Navbar = () => {
               </Button>
             )}
 
-            {/* Menu button for side panel */}
             <Button
               variant="ghost"
               size="icon"
@@ -233,7 +229,6 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <Button
               variant="ghost"
@@ -247,7 +242,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t py-4">
           <div className="container mx-auto px-4 space-y-4">
