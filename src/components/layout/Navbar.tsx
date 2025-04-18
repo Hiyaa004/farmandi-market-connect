@@ -2,7 +2,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Menu, X, User } from 'lucide-react';
+import { ShoppingBag, Menu, X, User, Heart, Settings, Package, History, LogOut } from 'lucide-react';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,7 +31,6 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img src="/logo.svg" alt="Farmandi" className="h-10 w-10" />
-            <span className="ml-2 text-xl font-bold text-farmandi-green">Farmandi</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -61,19 +67,58 @@ const Navbar = () => {
               variant="ghost" 
               size="icon" 
               className="relative"
+              onClick={() => navigate('/wishlist')}
+            >
+              <Heart className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative"
               onClick={() => navigate('/cart')}
             >
               <ShoppingBag className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
             </Button>
-            <Button 
-              variant="primary" 
-              onClick={handleLoginClick}
-              className="flex items-center"
-            >
-              <User className="mr-2 h-4 w-4" />
-              Login
-            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="primary" className="flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  Account
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-white">
+                <div className="px-2 py-1.5 text-sm font-semibold">My Account</div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/auth/user-type')}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/orders')}>
+                  <Package className="mr-2 h-4 w-4" />
+                  <span>My Orders</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/wishlist')}>
+                  <Heart className="mr-2 h-4 w-4" />
+                  <span>Wishlist</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/history')}>
+                  <History className="mr-2 h-4 w-4" />
+                  <span>Purchase History</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/auth/login')}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign In/Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Mobile Menu Button */}
@@ -119,26 +164,36 @@ const Navbar = () => {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="w-1/2 justify-start"
+                className="w-1/4 justify-center"
+                onClick={() => {
+                  navigate('/wishlist');
+                  setIsMenuOpen(false);
+                }}
+              >
+                <Heart className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-1/4 justify-center"
                 onClick={() => {
                   navigate('/cart');
                   setIsMenuOpen(false);
                 }}
               >
-                <ShoppingBag className="h-4 w-4 mr-2" />
-                Cart
+                <ShoppingBag className="h-4 w-4" />
               </Button>
               <Button 
                 variant="primary" 
                 size="sm" 
-                className="w-1/2"
+                className="w-2/4"
                 onClick={() => {
                   navigate('/auth/user-type');
                   setIsMenuOpen(false);
                 }}
               >
                 <User className="h-4 w-4 mr-2" />
-                Login
+                Account
               </Button>
             </div>
           </div>
