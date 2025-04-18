@@ -70,7 +70,7 @@ const Navbar = () => {
             </Link>
           </nav>
 
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="flex items-center space-x-4">
             <Button 
               variant="ghost" 
               size="icon" 
@@ -224,17 +224,7 @@ const Navbar = () => {
               size="icon"
               onClick={toggleMenu}
               aria-label="Menu"
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          </div>
-
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleMenu}
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              className="md:hidden"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
