@@ -1,15 +1,7 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Menu, X, User, Heart, Settings, Package, History, LogOut, Bell, CreditCard, Home } from 'lucide-react';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
+import { ShoppingBag, Menu, X, User, Heart, Settings, Package, LogOut, Bell, CreditCard, History } from 'lucide-react';
 import { 
   Sheet, 
   SheetContent, 
@@ -86,21 +78,26 @@ const Navbar = () => {
               variant="ghost" 
               size="icon" 
               className="relative"
-              onClick={() => isLoggedIn ? navigate('/wishlist') : navigate('/auth/user-type')}
+              onClick={() => isLoggedIn ? navigate('/wishlist') : navigate('/auth/user-type', { 
+                state: { returnPath: '/wishlist', action: 'add-to-wishlist' } 
+              })}
             >
               <Heart className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
             </Button>
+            
             <Button 
               variant="ghost" 
               size="icon" 
               className="relative"
-              onClick={() => isLoggedIn ? navigate('/cart') : navigate('/auth/user-type')}
+              onClick={() => isLoggedIn ? navigate('/cart') : navigate('/auth/user-type', { 
+                state: { returnPath: '/cart', action: 'view-cart' } 
+              })}
             >
               <ShoppingBag className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
             </Button>
-            
+
             {isLoggedIn ? (
               <Sheet>
                 <SheetTrigger asChild>
@@ -218,11 +215,22 @@ const Navbar = () => {
               <Button 
                 variant="primary" 
                 onClick={handleLoginClick}
+                className="flex items-center"
               >
-                <User className="h-4 w-4 mr-2" />
-                Account
+                <User className="mr-2 h-4 w-4" />
+                Sign In
               </Button>
             )}
+
+            {/* Menu button for side panel */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMenu}
+              aria-label="Menu"
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}

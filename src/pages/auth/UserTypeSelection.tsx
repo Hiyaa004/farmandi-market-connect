@@ -20,7 +20,8 @@ const UserTypeSelection = () => {
       state: { 
         returnPath,
         action,
-        productId
+        productId,
+        userType: type // Add user type to state
       } 
     });
   };
