@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,14 +39,17 @@ const Signup = () => {
       return;
     }
     
+    // Get user type from localStorage (set from UserTypeSelection page)
+    const userType = localStorage.getItem('userType') || 'customer';
+    
+    // Save username for welcome message
+    localStorage.setItem('username', username);
+    
     // In a real app, this would register the user with a server
     toast({
       title: "Account created",
       description: "Your account has been successfully created!",
     });
-    
-    // Get user type from localStorage (set from UserTypeSelection page)
-    const userType = localStorage.getItem('userType') || 'customer';
     
     // Redirect based on user type
     if (userType === 'farmer') {

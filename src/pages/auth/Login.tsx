@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +13,22 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnPath = location.state?.returnPath || '/';
+  const action = location.state?.action || '';
+  const productId = location.state?.productId || null;
+
+  useEffect(() => {
+    // Check if already logged in
+    const userType = localStorage.getItem('userType');
+    if (userType) {
+      if (userType === 'farmer') {
+        navigate('/farmer/dashboard');
+      } else {
+        navigate('/customer/dashboard');
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,19 +43,37 @@ const Login = () => {
 
     // Simulate login success
     // In a real app, this would validate with a server
-    localStorage.setItem('userType', 'customer'); // or 'farmer' based on user
+    const userType = localStorage.getItem('userType') || 'customer'; // Get from URL state or default to customer
+    localStorage.setItem('userType', userType);
+    localStorage.setItem('username', username);
+    
     toast({
       title: "Welcome back!",
       description: `You've successfully logged in as ${username}`,
     });
     
-    // Redirect based on user type
-    // This would normally come from the server response
-    const userType = localStorage.getItem('userType');
-    if (userType === 'farmer') {
-      navigate('/farmer/dashboard');
+    // Handle post-login actions
+    if (action === 'add-to-cart' && productId) {
+      toast({
+        title: "Added to cart",
+        description: "Product has been added to your cart",
+      });
+      navigate('/cart');
+    } else if (action === 'add-to-wishlist' && productId) {
+      toast({
+        title: "Added to wishlist",
+        description: "Product has been added to your wishlist",
+      });
+      navigate('/wishlist');
+    } else if (action === 'view-product' && returnPath.startsWith('/products/')) {
+      navigate(returnPath);
     } else {
-      navigate('/customer/dashboard');
+      // Redirect based on user type
+      if (userType === 'farmer') {
+        navigate('/farmer/dashboard');
+      } else {
+        navigate('/customer/dashboard');
+      }
     }
   };
 
@@ -128,6 +162,7 @@ const Login = () => {
               variant="outline" 
               onClick={() => {
                 localStorage.setItem('userType', 'farmer');
+                localStorage.setItem('username', 'Farmer');
                 navigate('/farmer/dashboard');
               }}
             >
@@ -138,6 +173,7 @@ const Login = () => {
               variant="outline" 
               onClick={() => {
                 localStorage.setItem('userType', 'customer');
+                localStorage.setItem('username', 'Customer');
                 navigate('/customer/dashboard');
               }}
             >

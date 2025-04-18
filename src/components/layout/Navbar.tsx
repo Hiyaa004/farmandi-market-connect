@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Menu, X, User, Heart, Settings, Package, History, LogOut } from 'lucide-react';
+import { ShoppingBag, Menu, X, User, Heart, Settings, Package, History, LogOut, Bell, CreditCard, Home } from 'lucide-react';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -10,11 +10,23 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetDescription, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetTrigger,
+  SheetClose
+} from "@/components/ui/sheet";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const isLoggedIn = localStorage.getItem('userType') !== null;
+  const userType = localStorage.getItem('userType');
+  const username = localStorage.getItem('username') || 'User';
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -22,6 +34,13 @@ const Navbar = () => {
 
   const handleLoginClick = () => {
     navigate('/auth/user-type');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('userType');
+    localStorage.removeItem('username');
+    navigate('/');
+    setIsMenuOpen(false);
   };
 
   return (
@@ -67,7 +86,7 @@ const Navbar = () => {
               variant="ghost" 
               size="icon" 
               className="relative"
-              onClick={() => navigate('/wishlist')}
+              onClick={() => isLoggedIn ? navigate('/wishlist') : navigate('/auth/user-type')}
             >
               <Heart className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
@@ -76,49 +95,134 @@ const Navbar = () => {
               variant="ghost" 
               size="icon" 
               className="relative"
-              onClick={() => navigate('/cart')}
+              onClick={() => isLoggedIn ? navigate('/cart') : navigate('/auth/user-type')}
             >
               <ShoppingBag className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
             </Button>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="primary" className="flex items-center">
-                  <User className="mr-2 h-4 w-4" />
-                  Account
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-white">
-                <div className="px-2 py-1.5 text-sm font-semibold">My Account</div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/auth/user-type')}>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/orders')}>
-                  <Package className="mr-2 h-4 w-4" />
-                  <span>My Orders</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/wishlist')}>
-                  <Heart className="mr-2 h-4 w-4" />
-                  <span>Wishlist</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/history')}>
-                  <History className="mr-2 h-4 w-4" />
-                  <span>Purchase History</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/settings')}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/auth/login')}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign In/Out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {isLoggedIn ? (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="primary" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    {username}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="w-[300px] sm:w-[400px]">
+                  <SheetHeader>
+                    <SheetTitle>Account Settings</SheetTitle>
+                    <SheetDescription>
+                      Manage your account settings and preferences
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="py-6">
+                    <div className="flex flex-col items-center mb-6">
+                      <div className="h-20 w-20 rounded-full bg-farmandi-green-dark/20 flex items-center justify-center text-farmandi-green-dark text-2xl font-bold mb-2">
+                        {username.charAt(0).toUpperCase()}
+                      </div>
+                      <h3 className="font-semibold text-lg">{username}</h3>
+                      <p className="text-sm text-gray-500">{username.toLowerCase()}@example.com</p>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to={userType === 'farmer' ? '/farmer/dashboard' : '/customer/dashboard'}>
+                            <Home className="mr-2 h-4 w-4" />
+                            <span>Dashboard</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/profile">
+                            <User className="mr-2 h-4 w-4" />
+                            <span>Profile</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/orders">
+                            <Package className="mr-2 h-4 w-4" />
+                            <span>Orders</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/wishlist">
+                            <Heart className="mr-2 h-4 w-4" />
+                            <span>Wishlist</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/history">
+                            <History className="mr-2 h-4 w-4" />
+                            <span>Purchase History</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/payment-methods">
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            <span>Payment Methods</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/notifications">
+                            <Bell className="mr-2 h-4 w-4" />
+                            <span>Notifications</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/settings">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <hr className="my-2" />
+                      
+                      <SheetClose asChild>
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50"
+                          onClick={handleLogout}
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          <span>Sign Out</span>
+                        </Button>
+                      </SheetClose>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            ) : (
+              <Button 
+                variant="primary" 
+                onClick={handleLoginClick}
+              >
+                <User className="h-4 w-4 mr-2" />
+                Account
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -183,18 +287,33 @@ const Navbar = () => {
               >
                 <ShoppingBag className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="primary" 
-                size="sm" 
-                className="w-2/4"
-                onClick={() => {
-                  navigate('/auth/user-type');
-                  setIsMenuOpen(false);
-                }}
-              >
-                <User className="h-4 w-4 mr-2" />
-                Account
-              </Button>
+              {isLoggedIn ? (
+                <Button 
+                  variant="primary" 
+                  size="sm" 
+                  className="w-2/4"
+                  onClick={() => {
+                    navigate(userType === 'farmer' ? '/farmer/dashboard' : '/customer/dashboard');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Dashboard
+                </Button>
+              ) : (
+                <Button 
+                  variant="primary" 
+                  size="sm" 
+                  className="w-2/4"
+                  onClick={() => {
+                    navigate('/auth/user-type');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Account
+                </Button>
+              )}
             </div>
           </div>
         </div>

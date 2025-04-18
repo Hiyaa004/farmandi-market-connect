@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Search, Filter, Star, ShoppingCart, Heart } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { toast } from '@/components/ui/use-toast';
 
 // Sample products data
 const productsData = [
@@ -128,7 +130,12 @@ const sortOptions = [
 ];
 
 const Products = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialSearchQuery = searchParams.get('search') || '';
+  
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('recommended');
   const [filters, setFilters] = useState({
@@ -136,6 +143,11 @@ const Products = () => {
     priceRange: [0, 200]
   });
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  useEffect(() => {
+    // Update search query when URL changes
+    setSearchQuery(initialSearchQuery);
+  }, [initialSearchQuery]);
 
   // Filter products based on search, category, and filters
   const filteredProducts = productsData.filter(product => {
@@ -168,6 +180,62 @@ const Products = () => {
     }
   });
 
+  const handleAddToWishlist = (productId: number) => {
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('userType') !== null;
+    
+    if (isLoggedIn) {
+      toast({
+        title: "Added to wishlist",
+        description: "Product has been added to your wishlist",
+      });
+    } else {
+      navigate('/auth/user-type', { 
+        state: { 
+          returnPath: '/wishlist',
+          action: 'add-to-wishlist',
+          productId
+        } 
+      });
+    }
+  };
+
+  const handleAddToCart = (productId: number) => {
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('userType') !== null;
+    
+    if (isLoggedIn) {
+      toast({
+        title: "Added to cart",
+        description: "Product has been added to your cart",
+      });
+    } else {
+      navigate('/auth/user-type', { 
+        state: { 
+          returnPath: '/cart',
+          action: 'add-to-cart',
+          productId
+        } 
+      });
+    }
+  };
+
+  const handleViewProduct = (productId: number) => {
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('userType') !== null;
+    
+    if (isLoggedIn) {
+      navigate(`/products/${productId}`);
+    } else {
+      navigate('/auth/user-type', { 
+        state: { 
+          returnPath: `/products/${productId}`,
+          action: 'view-product'
+        } 
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -193,6 +261,11 @@ const Products = () => {
                   className="pl-10 py-6"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+                    }
+                  }}
                 />
               </div>
               <Button 
@@ -416,7 +489,10 @@ const Products = () => {
                               Organic
                             </span>
                           )}
-                          <button className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 flex items-center justify-center">
+                          <button 
+                            className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 flex items-center justify-center"
+                            onClick={() => handleAddToWishlist(product.id)}
+                          >
                             <Heart className="h-4 w-4 text-farmandi-brown" />
                           </button>
                         </div>
@@ -437,9 +513,24 @@ const Products = () => {
                               <span className="font-bold text-farmandi-brown">₹{product.price}</span>
                               <span className="text-xs text-gray-500 ml-1">{product.unit}</span>
                             </div>
-                            <Button variant="customer" size="sm" className="flex items-center">
-                              <ShoppingCart className="h-4 w-4 mr-1" /> Add
-                            </Button>
+                            <div className="flex space-x-2">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="text-farmandi-green hover:text-farmandi-green-dark"
+                                onClick={() => handleViewProduct(product.id)}
+                              >
+                                View
+                              </Button>
+                              <Button 
+                                variant="customer" 
+                                size="sm" 
+                                className="flex items-center"
+                                onClick={() => handleAddToCart(product.id)}
+                              >
+                                <ShoppingCart className="h-4 w-4 mr-1" /> Add
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </Card>

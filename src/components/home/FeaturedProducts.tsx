@@ -10,7 +10,7 @@ const products = [
     id: 1,
     name: 'Organic Tomatoes',
     image: 'https://images.unsplash.com/photo-1524593166156-312f362cada0?auto=format&fit=crop&q=80&w=300',
-    price: '₹199',
+    price: 199,
     unit: 'per kg',
     farmer: 'Green Valley Farms',
     location: 'Karnataka'
@@ -19,7 +19,7 @@ const products = [
     id: 2,
     name: 'Fresh Strawberries',
     image: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&q=80&w=300',
-    price: '₹299',
+    price: 299,
     unit: 'per box',
     farmer: 'Hill Side Orchards',
     location: 'Himachal Pradesh'
@@ -28,16 +28,17 @@ const products = [
     id: 3,
     name: 'Organic Carrots',
     image: 'https://images.unsplash.com/photo-1598170845058-cbf39bd68459?auto=format&fit=crop&q=80&w=300',
-    price: '₹125',
+    price: 125,
     unit: 'per kg',
     farmer: 'Nature\'s Bounty',
-    location: 'Punjab'
+    location: 'Punjab',
+    isOrganic: true
   },
   {
     id: 4,
     name: 'Farm Fresh Apples',
     image: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&q=80&w=300',
-    price: '₹249',
+    price: 249,
     unit: 'per kg',
     farmer: 'Mountain View Farms',
     location: 'Uttarakhand'
@@ -48,32 +49,57 @@ const FeaturedProducts = () => {
   const navigate = useNavigate();
 
   const handleProductView = (productId: number) => {
-    // Check if user is logged in - in a real app, this would use a proper auth check
-    const isLoggedIn = localStorage.getItem('userType') !== null;
-    
-    if (isLoggedIn) {
-      // Navigate to product details page
-      navigate(`/products/${productId}`);
-    } else {
-      // Navigate to user type selection for login
-      navigate('/auth/user-type');
-    }
+    // Navigate to user type selection first
+    navigate('/auth/user-type', { 
+      state: { 
+        returnPath: `/products/${productId}`,
+        action: 'view-product'
+      } 
+    });
   };
 
   const handleAddToWishlist = (productId: number) => {
-    // In a real app, this would add to the wishlist in a database
-    toast({
-      title: "Added to wishlist",
-      description: "Product has been added to your wishlist",
-    });
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('userType') !== null;
+    
+    if (isLoggedIn) {
+      // In a real app, this would add to the wishlist in a database
+      toast({
+        title: "Added to wishlist",
+        description: "Product has been added to your wishlist",
+      });
+    } else {
+      // Navigate to user type selection
+      navigate('/auth/user-type', { 
+        state: { 
+          returnPath: '/wishlist',
+          action: 'add-to-wishlist',
+          productId: productId
+        } 
+      });
+    }
   };
 
   const handleAddToCart = (productId: number) => {
-    // In a real app, this would add to the cart in a database
-    toast({
-      title: "Added to cart",
-      description: "Product has been added to your cart",
-    });
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('userType') !== null;
+    
+    if (isLoggedIn) {
+      // In a real app, this would add to the cart in a database
+      toast({
+        title: "Added to cart",
+        description: "Product has been added to your cart",
+      });
+    } else {
+      // Navigate to user type selection
+      navigate('/auth/user-type', { 
+        state: { 
+          returnPath: '/cart',
+          action: 'add-to-cart',
+          productId: productId
+        } 
+      });
+    }
   };
 
   return (
@@ -105,11 +131,16 @@ const FeaturedProducts = () => {
                 >
                   <Heart className="h-4 w-4 text-farmandi-brown" />
                 </button>
+                {product.isOrganic && (
+                  <span className="absolute top-2 left-2 bg-farmandi-green text-white text-xs px-2 py-1 rounded-full">
+                    Organic
+                  </span>
+                )}
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-semibold text-lg">{product.name}</h3>
-                  <div className="text-farmandi-green font-bold">{product.price}</div>
+                  <div className="text-farmandi-green font-bold">₹{product.price}</div>
                 </div>
                 <p className="text-gray-500 text-sm">{product.unit}</p>
                 <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">

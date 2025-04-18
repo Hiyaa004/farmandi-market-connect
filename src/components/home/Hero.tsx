@@ -1,10 +1,26 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 const Hero = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (!searchQuery.trim()) {
+      toast({
+        title: "Search query empty",
+        description: "Please enter a search term",
+      });
+      return;
+    }
+    
+    navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+  };
+
   return (
     <section className="relative h-[70vh] min-h-[500px] bg-gradient-to-r from-farmandi-green/80 to-farmandi-brown/80 overflow-hidden">
       {/* Background Image with Overlay */}
@@ -35,9 +51,11 @@ const Hero = () => {
                 type="text" 
                 placeholder="Search for fresh produce..."
                 className="w-full px-4 py-3 pl-10 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-farmandi-green"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
-                    window.location.href = '/products';
+                    handleSearch();
                   }
                 }}
               />
@@ -47,7 +65,7 @@ const Hero = () => {
               variant="farmer" 
               size="lg" 
               className="sm:w-auto w-full"
-              onClick={() => window.location.href = '/products'}
+              onClick={handleSearch}
             >
               Search
             </Button>
