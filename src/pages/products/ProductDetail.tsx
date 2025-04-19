@@ -39,7 +39,7 @@ const productsData = [
     category: 'fruits',
     isOrganic: true,
     description: 'Sweet and juicy strawberries freshly picked from our hill farms. Perfect for desserts or enjoying as is.',
-    benefits: 'Strawberries are packed with antioxidants, vitamins, and fiber which helps regulate blood sugar levels. They're naturally low in calories, high in vitamin C, and a good source of manganese.',
+    benefits: 'Strawberries are packed with antioxidants, vitamins, and fiber which helps regulate blood sugar levels. They\'re naturally low in calories, high in vitamin C, and a good source of manganese.',
     howToUse: 'Enjoy fresh as a snack, add to desserts, blend in smoothies, or use as a topping for cereals and yogurt. Store in the refrigerator and wash just before using.'
   },
   {
@@ -55,7 +55,7 @@ const productsData = [
     category: 'vegetables',
     isOrganic: true,
     description: 'Crisp and sweet organic carrots. Harvested at peak freshness to ensure the best flavor and nutritional value.',
-    benefits: 'Carrots are rich in beta-carotene, a compound your body changes into vitamin A. They're also a good source of fiber, vitamin K, potassium, and antioxidants.',
+    benefits: 'Carrots are rich in beta-carotene, a compound your body changes into vitamin A. They\'re also a good source of fiber, vitamin K, potassium, and antioxidants.',
     howToUse: 'Eat raw as a snack, shred for salads, juice, or cook in a variety of dishes. Store in the refrigerator for up to 2 weeks.'
   },
   {
@@ -71,7 +71,7 @@ const productsData = [
     category: 'fruits',
     isOrganic: false,
     description: 'Crisp and juicy apples handpicked from our mountain orchards. Sweet with a perfect balance of tartness.',
-    benefits: 'Apples are high in fiber, vitamin C, and various antioxidants. They're also very filling, making them a weight-loss-friendly food.',
+    benefits: 'Apples are high in fiber, vitamin C, and various antioxidants. They\'re also very filling, making them a weight-loss-friendly food.',
     howToUse: 'Enjoy fresh, add to salads, bake into desserts, or make into sauces and juices. Store in a cool, dry place or refrigerate for longer freshness.'
   },
   {
