@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, LineChart, BarChart, TrendingUp, TrendingDown, Info } from 'lucide-react';
+import { ArrowLeft, LineChart, TrendingUp, TrendingDown, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { CropAnalysisChart } from '@/components/charts/CropAnalysisChart';
 
-// Sample data for crop analysis by state
 const stateData = [
   { 
     state: 'Punjab', 
@@ -42,16 +41,10 @@ const stateData = [
 ];
 
 const CropAnalysis = () => {
-  const [selectedState, setSelectedState] = useState('All States');
+  const [selectedState, setSelectedState] = useState('Punjab');
   
-  // Filter data based on selected state
-  const filteredData = selectedState === 'All States' 
-    ? stateData 
-    : stateData.filter(data => data.state === selectedState);
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-farmandi-green text-white">
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center">
@@ -66,7 +59,6 @@ const CropAnalysis = () => {
         </div>
       </header>
 
-      {/* State Selection */}
       <div className="bg-white shadow-sm py-6">
         <div className="container mx-auto px-6">
           <div className="flex flex-wrap gap-2">
@@ -89,32 +81,13 @@ const CropAnalysis = () => {
         </div>
       </div>
 
-      {/* Dashboard Content */}
       <main className="container mx-auto px-6 py-8">
-        {/* Overview Section */}
         <section className="mb-12">
           <h2 className="text-xl font-semibold mb-6">Market Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="p-6 col-span-1 md:col-span-2">
-              <h3 className="font-semibold text-lg mb-4">Crop Price Trends</h3>
-              <div className="h-64 flex items-center justify-center bg-gray-50 rounded-md">
-                <LineChart className="h-8 w-8 text-gray-400" />
-                <span className="ml-2 text-gray-500">Price trend chart will appear here</span>
-              </div>
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {['Wheat', 'Rice', 'Cotton'].map((crop, index) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-md">
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-medium text-sm">{crop}</h4>
-                      <div className={`${index % 2 === 0 ? 'text-green-500' : 'text-red-500'} flex items-center text-xs`}>
-                        {index % 2 === 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                        {index % 2 === 0 ? '+3.2%' : '-1.5%'}
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Last 30 days</p>
-                  </div>
-                ))}
-              </div>
+              <h3 className="font-semibold text-lg mb-4">Crop Distribution by State</h3>
+              <CropAnalysisChart selectedState={selectedState} />
             </Card>
 
             <Card className="p-6">
@@ -137,11 +110,10 @@ const CropAnalysis = () => {
           </div>
         </section>
 
-        {/* State-wise Analysis */}
         <section className="mb-12">
           <h2 className="text-xl font-semibold mb-6">State-wise Crop Analysis</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredData.map((data, index) => (
+            {stateData.map((data, index) => (
               <Card key={index} className="overflow-hidden">
                 <div className="bg-farmandi-green text-white p-6">
                   <h3 className="font-semibold text-lg">{data.state}</h3>
@@ -196,7 +168,6 @@ const CropAnalysis = () => {
           </div>
         </section>
 
-        {/* Recommendations Section */}
         <section>
           <h2 className="text-xl font-semibold mb-6">Farmandi Recommendations</h2>
           <Card className="p-6">

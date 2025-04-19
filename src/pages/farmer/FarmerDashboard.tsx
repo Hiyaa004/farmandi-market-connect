@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { BarChart, LineChart, PieChart, Activity, Package, Users, CreditCard, TrendingUp, FileText } from 'lucide-react';
+import { Activity, Package, Users, CreditCard, TrendingUp, FileText } from 'lucide-react';
+import { SalesOverviewChart } from '@/components/charts/SalesOverviewChart';
 
 const FarmerDashboard = () => {
   return (
@@ -95,20 +95,9 @@ const FarmerDashboard = () => {
 
         {/* Recent Activity and Sales Chart */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6 col-span-1 lg:col-span-2">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-semibold text-lg">Sales Overview</h3>
-              <select className="text-sm border rounded p-1">
-                <option>Last 7 days</option>
-                <option>Last 30 days</option>
-                <option>Last 3 months</option>
-              </select>
-            </div>
-            <div className="h-64 flex items-center justify-center bg-gray-50 rounded-md">
-              <BarChart className="h-8 w-8 text-gray-400" />
-              <span className="ml-2 text-gray-500">Sales chart will appear here</span>
-            </div>
-          </Card>
+          <div className="col-span-1 lg:col-span-2">
+            <SalesOverviewChart />
+          </div>
 
           <Card className="p-6">
             <h3 className="font-semibold text-lg mb-6">Recent Orders</h3>
