@@ -108,6 +108,18 @@ const productsData = [
     category: 'grains',
     isOrganic: true
   },
+  {
+    id: 9,
+    name: 'Bael Fruit',
+    image: '/lovable-uploads/52823382-16c4-485f-b7a5-9be715e64640.png',
+    price: 30,
+    unit: 'per piece',
+    farmer: 'Tropical Fruits Collective',
+    location: 'Bihar',
+    rating: 4.5,
+    category: 'fruits',
+    isOrganic: true
+  }
 ];
 
 // Categories
@@ -185,10 +197,41 @@ const Products = () => {
     const isLoggedIn = localStorage.getItem('userType') !== null;
     
     if (isLoggedIn) {
-      toast({
-        title: "Added to wishlist",
-        description: "Product has been added to your wishlist",
-      });
+      // Get existing wishlist items or initialize empty array
+      const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+      
+      // Check if product is already in wishlist
+      const isProductInWishlist = wishlistItems.some((item: any) => item.id === productId);
+      
+      if (!isProductInWishlist) {
+        // Find the product from our products data
+        const product = productsData.find(p => p.id === productId);
+        if (product) {
+          // Add product to wishlist
+          wishlistItems.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image
+          });
+          
+          // Save updated wishlist to localStorage
+          localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));
+          
+          toast({
+            title: "Added to wishlist",
+            description: "Product has been added to your wishlist",
+          });
+          
+          // Force navbar to update
+          window.dispatchEvent(new Event('storage'));
+        }
+      } else {
+        toast({
+          title: "Already in wishlist",
+          description: "This product is already in your wishlist",
+        });
+      }
     } else {
       navigate('/auth/user-type', { 
         state: { 
@@ -205,10 +248,40 @@ const Products = () => {
     const isLoggedIn = localStorage.getItem('userType') !== null;
     
     if (isLoggedIn) {
-      toast({
-        title: "Added to cart",
-        description: "Product has been added to your cart",
-      });
+      // Get existing cart items or initialize empty array
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      
+      // Find the product from our products data
+      const product = productsData.find(p => p.id === productId);
+      if (product) {
+        // Check if product is already in cart
+        const existingItemIndex = cartItems.findIndex((item: any) => item.id === productId);
+        
+        if (existingItemIndex >= 0) {
+          // Update quantity if product is already in cart
+          cartItems[existingItemIndex].quantity += 1;
+        } else {
+          // Add new product to cart
+          cartItems.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: 1
+          });
+        }
+        
+        // Save updated cart to localStorage
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        
+        toast({
+          title: "Added to cart",
+          description: "Product has been added to your cart",
+        });
+        
+        // Force navbar to update
+        window.dispatchEvent(new Event('storage'));
+      }
     } else {
       navigate('/auth/user-type', { 
         state: { 
@@ -221,19 +294,7 @@ const Products = () => {
   };
 
   const handleViewProduct = (productId: number) => {
-    // Check if user is logged in
-    const isLoggedIn = localStorage.getItem('userType') !== null;
-    
-    if (isLoggedIn) {
-      navigate(`/products/${productId}`);
-    } else {
-      navigate('/auth/user-type', { 
-        state: { 
-          returnPath: `/products/${productId}`,
-          action: 'view-product'
-        } 
-      });
-    }
+    navigate(`/products/${productId}`);
   };
 
   return (

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,12 @@ const Navbar = () => {
   const userType = localStorage.getItem('userType');
   const username = localStorage.getItem('username') || 'User';
 
+  // Get cart and wishlist count from localStorage
+  const cartCount = localStorage.getItem('cartItems') ? 
+    JSON.parse(localStorage.getItem('cartItems') || '[]').length : 0;
+  const wishlistCount = localStorage.getItem('wishlistItems') ? 
+    JSON.parse(localStorage.getItem('wishlistItems') || '[]').length : 0;
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -31,6 +38,8 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('userType');
     localStorage.removeItem('username');
+    localStorage.removeItem('cartItems');
+    localStorage.removeItem('wishlistItems');
     navigate('/');
     setIsMenuOpen(false);
   };
@@ -80,7 +89,9 @@ const Navbar = () => {
               })}
             >
               <Heart className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {wishlistCount}
+              </span>
             </Button>
             
             <Button 
@@ -92,9 +103,12 @@ const Navbar = () => {
               })}
             >
               <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {cartCount}
+              </span>
             </Button>
 
+            {/* Sign In Button - Always Visible */}
             {isLoggedIn ? (
               <Sheet>
                 <SheetTrigger asChild>
@@ -219,6 +233,7 @@ const Navbar = () => {
               </Button>
             )}
 
+            {/* Mobile Menu Button */}
             <Button
               variant="ghost"
               size="icon"

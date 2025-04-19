@@ -10,8 +10,11 @@ import { useState, useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/products/Products";
+import ProductDetail from "./pages/products/ProductDetail";
 import About from "./pages/about/About";
 import Help from "./pages/help/Help";
+import Cart from "./pages/cart/Cart";
+import Wishlist from "./pages/wishlist/Wishlist";
 
 // Auth Pages
 import UserTypeSelection from "./pages/auth/UserTypeSelection";
@@ -21,7 +24,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 
 // Farmer Pages
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
-import CropAnalysis from "./pages/farmer/CropAnalysis";
+import CropSelectionAnalysis from "./pages/farmer/CropSelectionAnalysis";
 import FarmerOnboarding from "./pages/farmer/FarmerOnboarding";
 
 // Customer Pages
@@ -40,7 +43,21 @@ const App = () => {
     const storedUserType = localStorage.getItem('userType');
     if (storedUserType) {
       setUserType(storedUserType);
+      setIsLoggedIn(true);
     }
+    
+    // Listen for storage events
+    const handleStorageChange = () => {
+      const updatedUserType = localStorage.getItem('userType');
+      setUserType(updatedUserType);
+      setIsLoggedIn(!!updatedUserType);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   return (
@@ -52,8 +69,11 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/:productId" element={<ProductDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/help" element={<Help />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             
             {/* Auth Routes */}
             <Route path="/auth/user-type" element={<UserTypeSelection />} />
@@ -63,7 +83,7 @@ const App = () => {
             
             {/* Farmer Routes */}
             <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
-            <Route path="/farmer/crop-analysis" element={<CropAnalysis />} />
+            <Route path="/farmer/crop-analysis" element={<CropSelectionAnalysis />} />
             <Route path="/farmer/onboarding" element={<FarmerOnboarding />} />
             <Route path="/farmer/register" element={<FarmerOnboarding />} />
             
