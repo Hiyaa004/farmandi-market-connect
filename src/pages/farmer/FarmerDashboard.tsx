@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Activity, Package, Users, CreditCard, TrendingUp, FileText } from 'lucide-react';
+import { Activity, Package, Users, CreditCard, TrendingUp, FileText, PieChart } from 'lucide-react';
 import { SalesOverviewChart } from '@/components/charts/SalesOverviewChart';
 
 const FarmerDashboard = () => {
