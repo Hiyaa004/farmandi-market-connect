@@ -1,17 +1,18 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const returnPath = location.state?.returnPath || '/';
@@ -89,7 +90,16 @@ const Login = () => {
             </div>
           </div>
           
-          <Button type="submit" className="w-full">Sign In</Button>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
+          </Button>
         </form>
         
         <div className="mt-6 text-center">
@@ -99,42 +109,6 @@ const Login = () => {
               Sign up
             </Link>
           </p>
-        </div>
-        
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue as</span>
-            </div>
-          </div>
-          
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => {
-                localStorage.setItem('userType', 'farmer');
-                localStorage.setItem('username', 'Farmer');
-                navigate('/farmer/dashboard');
-              }}
-            >
-              Farmer
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => {
-                localStorage.setItem('userType', 'customer');
-                localStorage.setItem('username', 'Customer');
-                navigate('/customer/dashboard');
-              }}
-            >
-              Customer
-            </Button>
-          </div>
         </div>
       </Card>
     </div>

@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Pages
 import Index from "./pages/Index";
@@ -41,8 +42,18 @@ const AppRoutes = () => {
       <Route path="/products/:productId" element={<ProductDetail />} />
       <Route path="/about" element={<About />} />
       <Route path="/help" element={<Help />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/wishlist" element={<Wishlist />} />
+      
+      <Route path="/cart" element={
+        <ProtectedRoute>
+          <Cart />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/wishlist" element={
+        <ProtectedRoute>
+          <Wishlist />
+        </ProtectedRoute>
+      } />
       
       {/* Auth Routes */}
       <Route path="/auth/user-type" element={<UserTypeSelection />} />
@@ -51,14 +62,38 @@ const AppRoutes = () => {
       <Route path="/auth/forgot-password" element={<ForgotPassword />} />
       
       {/* Farmer Routes */}
-      <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
-      <Route path="/farmer/crop-analysis" element={<CropSelectionAnalysis />} />
-      <Route path="/farmer/onboarding" element={<FarmerOnboarding />} />
+      <Route path="/farmer/dashboard" element={
+        <ProtectedRoute requiredRole="farmer">
+          <FarmerDashboard />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/farmer/crop-analysis" element={
+        <ProtectedRoute requiredRole="farmer">
+          <CropSelectionAnalysis />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/farmer/onboarding" element={
+        <ProtectedRoute requiredRole="farmer">
+          <FarmerOnboarding />
+        </ProtectedRoute>
+      } />
+      
       <Route path="/farmer/register" element={<FarmerOnboarding />} />
       
       {/* Customer Routes */}
-      <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-      <Route path="/customer/quality-scanner" element={<QualityScanner />} />
+      <Route path="/customer/dashboard" element={
+        <ProtectedRoute requiredRole="customer">
+          <CustomerDashboard />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/customer/quality-scanner" element={
+        <ProtectedRoute requiredRole="customer">
+          <QualityScanner />
+        </ProtectedRoute>
+      } />
       
       {/* Catch All */}
       <Route path="*" element={<NotFound />} />

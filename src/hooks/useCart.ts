@@ -10,7 +10,11 @@ export const useCart = () => {
   const { user } = useAuth();
 
   const fetchCartItems = async () => {
-    if (!user) return;
+    if (!user) {
+      setCartItems([]);
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -22,6 +26,7 @@ export const useCart = () => {
 
       setCartItems(data || []);
     } catch (error: any) {
+      console.error('Error fetching cart items:', error.message);
       toast({
         title: "Error",
         description: error.message,
@@ -35,7 +40,7 @@ export const useCart = () => {
   const addToCart = async (productId: number, quantity: number = 1, packSize: string = '1 Piece') => {
     if (!user) {
       toast({
-        title: "Error",
+        title: "Authentication required",
         description: "Please log in to add items to your cart",
         variant: "destructive",
       });
@@ -44,19 +49,20 @@ export const useCart = () => {
 
     try {
       // Check if item already exists in cart
-      const { data: existingItems } = await supabase
+      const { data: existingItems, error: fetchError } = await supabase
         .from('cart_items')
         .select()
         .eq('user_id', user.id)
-        .eq('product_id', productId)
-        .single();
+        .eq('product_id', productId);
 
-      if (existingItems) {
+      if (fetchError) throw fetchError;
+
+      if (existingItems && existingItems.length > 0) {
         // Update quantity if item exists
         const { error } = await supabase
           .from('cart_items')
-          .update({ quantity: existingItems.quantity + quantity })
-          .eq('id', existingItems.id);
+          .update({ quantity: existingItems[0].quantity + quantity })
+          .eq('id', existingItems[0].id);
 
         if (error) throw error;
       } else {
@@ -81,6 +87,7 @@ export const useCart = () => {
         description: "Item added to cart",
       });
     } catch (error: any) {
+      console.error('Error adding to cart:', error.message);
       toast({
         title: "Error",
         description: error.message,
@@ -107,6 +114,7 @@ export const useCart = () => {
         description: "Item removed from cart",
       });
     } catch (error: any) {
+      console.error('Error removing from cart:', error.message);
       toast({
         title: "Error",
         description: error.message,
@@ -129,6 +137,7 @@ export const useCart = () => {
 
       await fetchCartItems();
     } catch (error: any) {
+      console.error('Error updating quantity:', error.message);
       toast({
         title: "Error",
         description: error.message,
@@ -138,9 +147,7 @@ export const useCart = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchCartItems();
-    }
+    fetchCartItems();
   }, [user]);
 
   return {

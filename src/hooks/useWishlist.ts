@@ -10,7 +10,11 @@ export const useWishlist = () => {
   const { user } = useAuth();
 
   const fetchWishlistItems = async () => {
-    if (!user) return;
+    if (!user) {
+      setWishlistItems([]);
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -22,6 +26,7 @@ export const useWishlist = () => {
 
       setWishlistItems(data || []);
     } catch (error: any) {
+      console.error('Error fetching wishlist items:', error.message);
       toast({
         title: "Error",
         description: error.message,
@@ -35,7 +40,7 @@ export const useWishlist = () => {
   const addToWishlist = async (productId: number) => {
     if (!user) {
       toast({
-        title: "Error",
+        title: "Authentication required",
         description: "Please log in to add items to your wishlist",
         variant: "destructive",
       });
@@ -43,6 +48,24 @@ export const useWishlist = () => {
     }
 
     try {
+      // Check if item already exists in wishlist
+      const { data: existingItems, error: fetchError } = await supabase
+        .from('wishlist_items')
+        .select()
+        .eq('user_id', user.id)
+        .eq('product_id', productId);
+
+      if (fetchError) throw fetchError;
+
+      if (existingItems && existingItems.length > 0) {
+        toast({
+          title: "Item already in wishlist",
+          description: "This item is already in your wishlist",
+        });
+        return;
+      }
+
+      // Insert new item
       const { error } = await supabase
         .from('wishlist_items')
         .insert([
@@ -60,6 +83,7 @@ export const useWishlist = () => {
         description: "Item added to wishlist",
       });
     } catch (error: any) {
+      console.error('Error adding to wishlist:', error.message);
       toast({
         title: "Error",
         description: error.message,
@@ -86,6 +110,7 @@ export const useWishlist = () => {
         description: "Item removed from wishlist",
       });
     } catch (error: any) {
+      console.error('Error removing from wishlist:', error.message);
       toast({
         title: "Error",
         description: error.message,
@@ -95,9 +120,7 @@ export const useWishlist = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchWishlistItems();
-    }
+    fetchWishlistItems();
   }, [user]);
 
   return {

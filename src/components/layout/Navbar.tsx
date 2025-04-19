@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Menu, X, User, Heart, Settings, Package, LogOut, Bell, CreditCard, History, Home } from 'lucide-react';
+import { ShoppingBag, Menu, X, User, Heart, Settings, Package, LogOut, Bell, CreditCard, History, Home, Loader2 } from 'lucide-react';
 import { 
   Sheet, 
   SheetContent, 
@@ -12,20 +12,24 @@ import {
   SheetTrigger,
   SheetClose
 } from "@/components/ui/sheet";
+import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem('userType') !== null;
-  const userType = localStorage.getItem('userType');
-  const username = localStorage.getItem('username') || 'User';
+  const { user, signOut, loading, userProfile } = useAuth();
+  const { cartItems } = useCart();
+  const { wishlistItems } = useWishlist();
 
-  // Get cart and wishlist count from localStorage
-  const cartCount = localStorage.getItem('cartItems') ? 
-    JSON.parse(localStorage.getItem('cartItems') || '[]').length : 0;
-  const wishlistCount = localStorage.getItem('wishlistItems') ? 
-    JSON.parse(localStorage.getItem('wishlistItems') || '[]').length : 0;
+  const cartCount = cartItems?.length || 0;
+  const wishlistCount = wishlistItems?.length || 0;
+  
+  const username = userProfile?.username || user?.email || 'User';
+  const userType = userProfile?.user_type || 'customer';
+  const isLoggedIn = !!user;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -36,11 +40,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('userType');
-    localStorage.removeItem('username');
-    localStorage.removeItem('cartItems');
-    localStorage.removeItem('wishlistItems');
-    navigate('/');
+    signOut();
     setIsMenuOpen(false);
   };
 
@@ -109,12 +109,18 @@ const Navbar = () => {
             </Button>
 
             {/* Sign In Button - Always Visible */}
-            {isLoggedIn ? (
+            {loading ? (
+              <Button variant="ghost" disabled>
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </Button>
+            ) : isLoggedIn ? (
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="primary" className="flex items-center">
                     <User className="mr-2 h-4 w-4" />
-                    {username}
+                    {username && username.includes('@') 
+                      ? username.split('@')[0] 
+                      : username}
                   </Button>
                 </SheetTrigger>
                 <SheetContent className="w-[300px] sm:w-[400px]">
@@ -127,10 +133,14 @@ const Navbar = () => {
                   <div className="py-6">
                     <div className="flex flex-col items-center mb-6">
                       <div className="h-20 w-20 rounded-full bg-farmandi-green-dark/20 flex items-center justify-center text-farmandi-green-dark text-2xl font-bold mb-2">
-                        {username.charAt(0).toUpperCase()}
+                        {username ? username.charAt(0).toUpperCase() : 'U'}
                       </div>
-                      <h3 className="font-semibold text-lg">{username}</h3>
-                      <p className="text-sm text-gray-500">{username.toLowerCase()}@example.com</p>
+                      <h3 className="font-semibold text-lg">
+                        {username && username.includes('@') 
+                          ? username.split('@')[0] 
+                          : username}
+                      </h3>
+                      <p className="text-sm text-gray-500">{user?.email}</p>
                     </div>
                     
                     <div className="space-y-3">
@@ -139,24 +149,6 @@ const Navbar = () => {
                           <Link to={userType === 'farmer' ? '/farmer/dashboard' : '/customer/dashboard'}>
                             <Home className="mr-2 h-4 w-4" />
                             <span>Dashboard</span>
-                          </Link>
-                        </Button>
-                      </SheetClose>
-                      
-                      <SheetClose asChild>
-                        <Button variant="ghost" className="w-full justify-start" asChild>
-                          <Link to="/profile">
-                            <User className="mr-2 h-4 w-4" />
-                            <span>Profile</span>
-                          </Link>
-                        </Button>
-                      </SheetClose>
-                      
-                      <SheetClose asChild>
-                        <Button variant="ghost" className="w-full justify-start" asChild>
-                          <Link to="/orders">
-                            <Package className="mr-2 h-4 w-4" />
-                            <span>Orders</span>
                           </Link>
                         </Button>
                       </SheetClose>
@@ -172,36 +164,9 @@ const Navbar = () => {
                       
                       <SheetClose asChild>
                         <Button variant="ghost" className="w-full justify-start" asChild>
-                          <Link to="/history">
-                            <History className="mr-2 h-4 w-4" />
-                            <span>Purchase History</span>
-                          </Link>
-                        </Button>
-                      </SheetClose>
-                      
-                      <SheetClose asChild>
-                        <Button variant="ghost" className="w-full justify-start" asChild>
-                          <Link to="/payment-methods">
-                            <CreditCard className="mr-2 h-4 w-4" />
-                            <span>Payment Methods</span>
-                          </Link>
-                        </Button>
-                      </SheetClose>
-                      
-                      <SheetClose asChild>
-                        <Button variant="ghost" className="w-full justify-start" asChild>
-                          <Link to="/notifications">
-                            <Bell className="mr-2 h-4 w-4" />
-                            <span>Notifications</span>
-                          </Link>
-                        </Button>
-                      </SheetClose>
-                      
-                      <SheetClose asChild>
-                        <Button variant="ghost" className="w-full justify-start" asChild>
-                          <Link to="/settings">
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Settings</span>
+                          <Link to="/orders">
+                            <Package className="mr-2 h-4 w-4" />
+                            <span>Orders</span>
                           </Link>
                         </Button>
                       </SheetClose>
