@@ -1,34 +1,24 @@
-
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Eye, EyeOff, Mail, User, Lock } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/use-toast';
 
 const Signup = () => {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { signUp } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!username || !email || !password || !confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
-      return;
-    }
     
     if (password !== confirmPassword) {
       toast({
@@ -38,25 +28,11 @@ const Signup = () => {
       });
       return;
     }
-    
+
     // Get user type from localStorage (set from UserTypeSelection page)
     const userType = localStorage.getItem('userType') || 'customer';
     
-    // Save username for welcome message
-    localStorage.setItem('username', username);
-    
-    // In a real app, this would register the user with a server
-    toast({
-      title: "Account created",
-      description: "Your account has been successfully created!",
-    });
-    
-    // Redirect based on user type
-    if (userType === 'farmer') {
-      navigate('/farmer/onboarding');
-    } else {
-      navigate('/customer/dashboard');
-    }
+    await signUp(email, password, userType);
   };
 
   const toggleShowPassword = () => {
@@ -86,9 +62,9 @@ const Signup = () => {
               <Input 
                 id="username" 
                 type="text" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-                placeholder="Choose a username"
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                placeholder="you@example.com"
                 className="block w-full pl-10" 
                 required
               />

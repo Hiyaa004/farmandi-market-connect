@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,70 +29,53 @@ import FarmerOnboarding from "./pages/farmer/FarmerOnboarding";
 // Customer Pages
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import QualityScanner from "./pages/customer/QualityScanner";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/products" element={<Products />} />
+      <Route path="/products/:productId" element={<ProductDetail />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/help" element={<Help />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/wishlist" element={<Wishlist />} />
+      
+      {/* Auth Routes */}
+      <Route path="/auth/user-type" element={<UserTypeSelection />} />
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/signup" element={<Signup />} />
+      <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+      
+      {/* Farmer Routes */}
+      <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
+      <Route path="/farmer/crop-analysis" element={<CropSelectionAnalysis />} />
+      <Route path="/farmer/onboarding" element={<FarmerOnboarding />} />
+      <Route path="/farmer/register" element={<FarmerOnboarding />} />
+      
+      {/* Customer Routes */}
+      <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+      <Route path="/customer/quality-scanner" element={<QualityScanner />} />
+      
+      {/* Catch All */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
 const App = () => {
-  // In a real app, this would be a proper auth system
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userType, setUserType] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check localStorage for auth
-    const storedUserType = localStorage.getItem('userType');
-    if (storedUserType) {
-      setUserType(storedUserType);
-      setIsLoggedIn(true);
-    }
-    
-    // Listen for storage events
-    const handleStorageChange = () => {
-      const updatedUserType = localStorage.getItem('userType');
-      setUserType(updatedUserType);
-      setIsLoggedIn(!!updatedUserType);
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:productId" element={<ProductDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            
-            {/* Auth Routes */}
-            <Route path="/auth/user-type" element={<UserTypeSelection />} />
-            <Route path="/auth/login" element={<Login />} />
-            <Route path="/auth/signup" element={<Signup />} />
-            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-            
-            {/* Farmer Routes */}
-            <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
-            <Route path="/farmer/crop-analysis" element={<CropSelectionAnalysis />} />
-            <Route path="/farmer/onboarding" element={<FarmerOnboarding />} />
-            <Route path="/farmer/register" element={<FarmerOnboarding />} />
-            
-            {/* Customer Routes */}
-            <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-            <Route path="/customer/quality-scanner" element={<QualityScanner />} />
-            
-            {/* Catch All */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AuthProvider>
+            <AppRoutes />
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

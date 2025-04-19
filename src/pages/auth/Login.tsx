@@ -1,79 +1,34 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Eye, EyeOff } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const returnPath = location.state?.returnPath || '/';
   const action = location.state?.action || '';
   const productId = location.state?.productId || null;
 
-  useEffect(() => {
-    // Check if already logged in
-    const userType = localStorage.getItem('userType');
-    if (userType) {
-      if (userType === 'farmer') {
-        navigate('/farmer/dashboard');
-      } else {
-        navigate('/customer/dashboard');
-      }
-    }
-  }, [navigate]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username || !password) {
-      toast({
-        title: "Error",
-        description: "Please enter both username and password",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Simulate login success
-    // In a real app, this would validate with a server
-    const userType = localStorage.getItem('userType') || 'customer'; // Get from URL state or default to customer
-    localStorage.setItem('userType', userType);
-    localStorage.setItem('username', username);
-    
-    toast({
-      title: "Welcome back!",
-      description: `You've successfully logged in as ${username}`,
-    });
+    await signIn(email, password);
     
     // Handle post-login actions
     if (action === 'add-to-cart' && productId) {
-      toast({
-        title: "Added to cart",
-        description: "Product has been added to your cart",
-      });
       navigate('/cart');
     } else if (action === 'add-to-wishlist' && productId) {
-      toast({
-        title: "Added to wishlist",
-        description: "Product has been added to your wishlist",
-      });
       navigate('/wishlist');
     } else if (action === 'view-product' && returnPath.startsWith('/products/')) {
       navigate(returnPath);
-    } else {
-      // Redirect based on user type
-      if (userType === 'farmer') {
-        navigate('/farmer/dashboard');
-      } else {
-        navigate('/customer/dashboard');
-      }
     }
   };
 
@@ -95,13 +50,13 @@ const Login = () => {
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="email">Email</Label>
             <Input 
-              id="username" 
+              id="email" 
               type="text" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-              placeholder="Enter your username"
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              placeholder="Enter your email"
               className="mt-1 block w-full" 
               required
             />
