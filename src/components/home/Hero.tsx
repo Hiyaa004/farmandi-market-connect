@@ -1,10 +1,16 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    navigate('/products');
+  };
+
   return (
     <section className="relative h-[70vh] min-h-[500px] bg-gradient-to-r from-farmandi-green/80 to-farmandi-brown/80 overflow-hidden">
       {/* Background Image with Overlay */}
@@ -38,7 +44,7 @@ const Hero = () => {
               />
               <Search className="absolute left-3 top-3 text-gray-400" size={20} />
             </div>
-            <Button variant="farmer" size="lg" className="sm:w-auto w-full">
+            <Button variant="farmer" size="lg" className="sm:w-auto w-full" onClick={handleSearch}>
               Search
             </Button>
           </div>

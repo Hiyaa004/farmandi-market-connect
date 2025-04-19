@@ -2,13 +2,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { ShoppingCart } from 'lucide-react';
 
 const products = [
   {
     id: 1,
     name: 'Organic Tomatoes',
     image: 'https://images.unsplash.com/photo-1524593166156-312f362cada0?auto=format&fit=crop&q=80&w=300',
-    price: '$3.99',
+    price: 45,
     unit: 'per kg',
     farmer: 'Green Valley Farms',
     location: 'Karnataka'
@@ -17,7 +18,7 @@ const products = [
     id: 2,
     name: 'Fresh Strawberries',
     image: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&q=80&w=300',
-    price: '$5.99',
+    price: 120,
     unit: 'per box',
     farmer: 'Hill Side Orchards',
     location: 'Himachal Pradesh'
@@ -26,16 +27,16 @@ const products = [
     id: 3,
     name: 'Organic Carrots',
     image: 'https://images.unsplash.com/photo-1598170845058-cbf39bd68459?auto=format&fit=crop&q=80&w=300',
-    price: '$2.49',
+    price: 35,
     unit: 'per kg',
-    farmer: 'Nature\'s Bounty',
+    farmer: "Nature's Bounty",
     location: 'Punjab'
   },
   {
     id: 4,
     name: 'Farm Fresh Apples',
     image: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&q=80&w=300',
-    price: '$4.99',
+    price: 80,
     unit: 'per kg',
     farmer: 'Mountain View Farms',
     location: 'Uttarakhand'
@@ -70,7 +71,7 @@ const FeaturedProducts = () => {
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-semibold text-lg">{product.name}</h3>
-                  <div className="text-farmandi-green font-bold">{product.price}</div>
+                  <div className="text-farmandi-green font-bold">₹{product.price}</div>
                 </div>
                 <p className="text-gray-500 text-sm">{product.unit}</p>
                 <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
@@ -78,9 +79,14 @@ const FeaturedProducts = () => {
                     <p>Farmer: {product.farmer}</p>
                     <p>Location: {product.location}</p>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-farmandi-green hover:text-farmandi-green-dark">
-                    <Link to={`/products/${product.id}`}>View</Link>
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" className="text-farmandi-green hover:text-farmandi-green-dark">
+                      <Link to={`/products/${product.id}`}>View</Link>
+                    </Button>
+                    <Button variant="customer" size="sm">
+                      <ShoppingCart className="h-4 w-4 mr-1" /> Add
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
