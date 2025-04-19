@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -9,6 +10,7 @@ import { Search, Filter, Star, ShoppingCart, Heart } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
 
+// Sample products data
 const productsData = [
   {
     id: 1,
@@ -37,7 +39,7 @@ const productsData = [
   {
     id: 3,
     name: 'Organic Carrots',
-    image: 'https://images.unsplash.com/photo-1447175008436-054170c2e979?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1598170845058-cbf39bd68459?auto=format&fit=crop&q=80&w=400',
     price: 35,
     unit: 'per kg',
     farmer: "Nature's Bounty",
@@ -106,20 +108,9 @@ const productsData = [
     category: 'grains',
     isOrganic: true
   },
-  {
-    id: 9,
-    name: 'Bael Fruit',
-    image: '/lovable-uploads/52823382-16c4-485f-b7a5-9be715e64640.png',
-    price: 30,
-    unit: 'per piece',
-    farmer: 'Tropical Fruits Collective',
-    location: 'Bihar',
-    rating: 4.5,
-    category: 'fruits',
-    isOrganic: true
-  }
 ];
 
+// Categories
 const categories = [
   { id: 'all', label: 'All Products' },
   { id: 'vegetables', label: 'Vegetables' },
@@ -129,6 +120,7 @@ const categories = [
   { id: 'grains', label: 'Grains & Pulses' },
 ];
 
+// Sort options
 const sortOptions = [
   { value: 'recommended', label: 'Recommended' },
   { value: 'price-low-high', label: 'Price: Low to High' },
@@ -153,9 +145,11 @@ const Products = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   useEffect(() => {
+    // Update search query when URL changes
     setSearchQuery(initialSearchQuery);
   }, [initialSearchQuery]);
 
+  // Filter products based on search, category, and filters
   const filteredProducts = productsData.filter(product => {
     const matchesSearch = searchQuery === '' || 
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -172,6 +166,7 @@ const Products = () => {
     return matchesSearch && matchesCategory && matchesOrganic && matchesPriceRange;
   });
 
+  // Sort products
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case 'price-low-high':
@@ -181,43 +176,19 @@ const Products = () => {
       case 'rating':
         return b.rating - a.rating;
       default:
-        return 0;
+        return 0; // Default or 'recommended'
     }
   });
 
   const handleAddToWishlist = (productId: number) => {
+    // Check if user is logged in
     const isLoggedIn = localStorage.getItem('userType') !== null;
     
     if (isLoggedIn) {
-      const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-      
-      const isProductInWishlist = wishlistItems.some((item: any) => item.id === productId);
-      
-      if (!isProductInWishlist) {
-        const product = productsData.find(p => p.id === productId);
-        if (product) {
-          wishlistItems.push({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.image
-          });
-          
-          localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));
-          
-          toast({
-            title: "Added to wishlist",
-            description: "Product has been added to your wishlist",
-          });
-          
-          window.dispatchEvent(new Event('storage'));
-        }
-      } else {
-        toast({
-          title: "Already in wishlist",
-          description: "This product is already in your wishlist",
-        });
-      }
+      toast({
+        title: "Added to wishlist",
+        description: "Product has been added to your wishlist",
+      });
     } else {
       navigate('/auth/user-type', { 
         state: { 
@@ -230,36 +201,14 @@ const Products = () => {
   };
 
   const handleAddToCart = (productId: number) => {
+    // Check if user is logged in
     const isLoggedIn = localStorage.getItem('userType') !== null;
     
     if (isLoggedIn) {
-      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      
-      const product = productsData.find(p => p.id === productId);
-      if (product) {
-        const existingItemIndex = cartItems.findIndex((item: any) => item.id === productId);
-        
-        if (existingItemIndex >= 0) {
-          cartItems[existingItemIndex].quantity += 1;
-        } else {
-          cartItems.push({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.image,
-            quantity: 1
-          });
-        }
-        
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        
-        toast({
-          title: "Added to cart",
-          description: "Product has been added to your cart",
-        });
-        
-        window.dispatchEvent(new Event('storage'));
-      }
+      toast({
+        title: "Added to cart",
+        description: "Product has been added to your cart",
+      });
     } else {
       navigate('/auth/user-type', { 
         state: { 
@@ -272,7 +221,19 @@ const Products = () => {
   };
 
   const handleViewProduct = (productId: number) => {
-    navigate(`/products/${productId}`);
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('userType') !== null;
+    
+    if (isLoggedIn) {
+      navigate(`/products/${productId}`);
+    } else {
+      navigate('/auth/user-type', { 
+        state: { 
+          returnPath: `/products/${productId}`,
+          action: 'view-product'
+        } 
+      });
+    }
   };
 
   return (
@@ -280,6 +241,7 @@ const Products = () => {
       <Navbar />
       
       <main className="flex-grow">
+        {/* Hero Banner */}
         <section className="bg-gradient-to-r from-farmandi-green/10 to-farmandi-brown/10 py-10">
           <div className="container mx-auto px-6">
             <h1 className="text-3xl md:text-4xl font-bold text-farmandi-brown mb-4">
@@ -317,11 +279,14 @@ const Products = () => {
           </div>
         </section>
 
+        {/* Product Listing Section */}
         <section className="py-12">
           <div className="container mx-auto px-6">
             <div className="flex flex-col md:flex-row gap-8">
+              {/* Sidebar Filters - Desktop */}
               <div className="hidden md:block w-64 shrink-0">
                 <div className="sticky top-6 space-y-8">
+                  {/* Categories */}
                   <div>
                     <h3 className="font-semibold text-lg mb-4">Categories</h3>
                     <div className="space-y-2">
@@ -341,10 +306,12 @@ const Products = () => {
                     </div>
                   </div>
                   
+                  {/* Filters */}
                   <div>
                     <h3 className="font-semibold text-lg mb-4">Filters</h3>
                     
                     <div className="space-y-6">
+                      {/* Organic Filter */}
                       <div className="flex items-center space-x-2">
                         <Checkbox 
                           id="organic" 
@@ -361,6 +328,7 @@ const Products = () => {
                         </label>
                       </div>
                       
+                      {/* Price Range */}
                       <div>
                         <h4 className="text-sm font-medium mb-2">Price Range</h4>
                         <div className="flex items-center gap-2">
@@ -392,9 +360,11 @@ const Products = () => {
                 </div>
               </div>
 
+              {/* Mobile Filters */}
               {mobileFiltersOpen && (
                 <div className="md:hidden p-4 bg-white rounded-lg border border-gray-200 mb-6">
                   <div className="space-y-6">
+                    {/* Categories */}
                     <div>
                       <h3 className="font-semibold text-lg mb-3">Categories</h3>
                       <div className="grid grid-cols-2 gap-2">
@@ -414,10 +384,12 @@ const Products = () => {
                       </div>
                     </div>
                     
+                    {/* Filters */}
                     <div>
                       <h3 className="font-semibold text-lg mb-3">Filters</h3>
                       
                       <div className="space-y-4">
+                        {/* Organic Filter */}
                         <div className="flex items-center space-x-2">
                           <Checkbox 
                             id="organic-mobile" 
@@ -434,6 +406,7 @@ const Products = () => {
                           </label>
                         </div>
                         
+                        {/* Price Range */}
                         <div>
                           <h4 className="text-sm font-medium mb-2">Price Range</h4>
                           <div className="flex items-center gap-2">
@@ -476,7 +449,9 @@ const Products = () => {
                 </div>
               )}
               
+              {/* Product Grid */}
               <div className="flex-grow">
+                {/* Sort and Results Count */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                   <p className="text-gray-600 mb-4 sm:mb-0">
                     Showing {sortedProducts.length} results
@@ -498,6 +473,7 @@ const Products = () => {
                   </div>
                 </div>
                 
+                {/* Products Grid */}
                 {sortedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {sortedProducts.map((product) => (

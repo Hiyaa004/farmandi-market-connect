@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Menu, X, User, Heart, Settings, Package, LogOut, Bell, CreditCard, History, Home, Loader2 } from 'lucide-react';
+import { ShoppingBag, Menu, X, User, Heart, Settings, Package, LogOut, Bell, CreditCard, History, Home } from 'lucide-react';
 import { 
   Sheet, 
   SheetContent, 
@@ -12,24 +11,14 @@ import {
   SheetTrigger,
   SheetClose
 } from "@/components/ui/sheet";
-import { useAuth } from '@/contexts/AuthContext';
-import { useCart } from '@/hooks/useCart';
-import { useWishlist } from '@/hooks/useWishlist';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut, loading, userProfile } = useAuth();
-  const { cartItems } = useCart();
-  const { wishlistItems } = useWishlist();
-
-  const cartCount = cartItems?.length || 0;
-  const wishlistCount = wishlistItems?.length || 0;
-  
-  const username = userProfile?.username || user?.email || 'User';
-  const userType = userProfile?.user_type || 'customer';
-  const isLoggedIn = !!user;
+  const isLoggedIn = localStorage.getItem('userType') !== null;
+  const userType = localStorage.getItem('userType');
+  const username = localStorage.getItem('username') || 'User';
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -40,7 +29,9 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    signOut();
+    localStorage.removeItem('userType');
+    localStorage.removeItem('username');
+    navigate('/');
     setIsMenuOpen(false);
   };
 
@@ -89,9 +80,7 @@ const Navbar = () => {
               })}
             >
               <Heart className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {wishlistCount}
-              </span>
+              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
             </Button>
             
             <Button 
@@ -103,24 +92,15 @@ const Navbar = () => {
               })}
             >
               <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {cartCount}
-              </span>
+              <span className="absolute -top-1 -right-1 bg-farmandi-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
             </Button>
 
-            {/* Sign In Button - Always Visible */}
-            {loading ? (
-              <Button variant="ghost" disabled>
-                <Loader2 className="h-4 w-4 animate-spin" />
-              </Button>
-            ) : isLoggedIn ? (
+            {isLoggedIn ? (
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="primary" className="flex items-center">
                     <User className="mr-2 h-4 w-4" />
-                    {username && username.includes('@') 
-                      ? username.split('@')[0] 
-                      : username}
+                    {username}
                   </Button>
                 </SheetTrigger>
                 <SheetContent className="w-[300px] sm:w-[400px]">
@@ -133,14 +113,10 @@ const Navbar = () => {
                   <div className="py-6">
                     <div className="flex flex-col items-center mb-6">
                       <div className="h-20 w-20 rounded-full bg-farmandi-green-dark/20 flex items-center justify-center text-farmandi-green-dark text-2xl font-bold mb-2">
-                        {username ? username.charAt(0).toUpperCase() : 'U'}
+                        {username.charAt(0).toUpperCase()}
                       </div>
-                      <h3 className="font-semibold text-lg">
-                        {username && username.includes('@') 
-                          ? username.split('@')[0] 
-                          : username}
-                      </h3>
-                      <p className="text-sm text-gray-500">{user?.email}</p>
+                      <h3 className="font-semibold text-lg">{username}</h3>
+                      <p className="text-sm text-gray-500">{username.toLowerCase()}@example.com</p>
                     </div>
                     
                     <div className="space-y-3">
@@ -149,6 +125,24 @@ const Navbar = () => {
                           <Link to={userType === 'farmer' ? '/farmer/dashboard' : '/customer/dashboard'}>
                             <Home className="mr-2 h-4 w-4" />
                             <span>Dashboard</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/profile">
+                            <User className="mr-2 h-4 w-4" />
+                            <span>Profile</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/orders">
+                            <Package className="mr-2 h-4 w-4" />
+                            <span>Orders</span>
                           </Link>
                         </Button>
                       </SheetClose>
@@ -164,9 +158,36 @@ const Navbar = () => {
                       
                       <SheetClose asChild>
                         <Button variant="ghost" className="w-full justify-start" asChild>
-                          <Link to="/orders">
-                            <Package className="mr-2 h-4 w-4" />
-                            <span>Orders</span>
+                          <Link to="/history">
+                            <History className="mr-2 h-4 w-4" />
+                            <span>Purchase History</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/payment-methods">
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            <span>Payment Methods</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/notifications">
+                            <Bell className="mr-2 h-4 w-4" />
+                            <span>Notifications</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                          <Link to="/settings">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
                           </Link>
                         </Button>
                       </SheetClose>
@@ -198,7 +219,6 @@ const Navbar = () => {
               </Button>
             )}
 
-            {/* Mobile Menu Button */}
             <Button
               variant="ghost"
               size="icon"

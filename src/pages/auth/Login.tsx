@@ -1,35 +1,79 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { signIn, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const returnPath = location.state?.returnPath || '/';
   const action = location.state?.action || '';
   const productId = location.state?.productId || null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    // Check if already logged in
+    const userType = localStorage.getItem('userType');
+    if (userType) {
+      if (userType === 'farmer') {
+        navigate('/farmer/dashboard');
+      } else {
+        navigate('/customer/dashboard');
+      }
+    }
+  }, [navigate]);
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    await signIn(email, password);
+    if (!username || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter both username and password",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Simulate login success
+    // In a real app, this would validate with a server
+    const userType = localStorage.getItem('userType') || 'customer'; // Get from URL state or default to customer
+    localStorage.setItem('userType', userType);
+    localStorage.setItem('username', username);
+    
+    toast({
+      title: "Welcome back!",
+      description: `You've successfully logged in as ${username}`,
+    });
     
     // Handle post-login actions
     if (action === 'add-to-cart' && productId) {
+      toast({
+        title: "Added to cart",
+        description: "Product has been added to your cart",
+      });
       navigate('/cart');
     } else if (action === 'add-to-wishlist' && productId) {
+      toast({
+        title: "Added to wishlist",
+        description: "Product has been added to your wishlist",
+      });
       navigate('/wishlist');
     } else if (action === 'view-product' && returnPath.startsWith('/products/')) {
       navigate(returnPath);
+    } else {
+      // Redirect based on user type
+      if (userType === 'farmer') {
+        navigate('/farmer/dashboard');
+      } else {
+        navigate('/customer/dashboard');
+      }
     }
   };
 
@@ -51,13 +95,13 @@ const Login = () => {
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="username">Username</Label>
             <Input 
-              id="email" 
+              id="username" 
               type="text" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              placeholder="Enter your email"
+              value={username} 
+              onChange={(e) => setUsername(e.target.value)} 
+              placeholder="Enter your username"
               className="mt-1 block w-full" 
               required
             />
@@ -90,16 +134,7 @@ const Login = () => {
             </div>
           </div>
           
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing In...
-              </>
-            ) : (
-              "Sign In"
-            )}
-          </Button>
+          <Button type="submit" className="w-full">Sign In</Button>
         </form>
         
         <div className="mt-6 text-center">
@@ -109,6 +144,42 @@ const Login = () => {
               Sign up
             </Link>
           </p>
+        </div>
+        
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or continue as</span>
+            </div>
+          </div>
+          
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => {
+                localStorage.setItem('userType', 'farmer');
+                localStorage.setItem('username', 'Farmer');
+                navigate('/farmer/dashboard');
+              }}
+            >
+              Farmer
+            </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => {
+                localStorage.setItem('userType', 'customer');
+                localStorage.setItem('username', 'Customer');
+                navigate('/customer/dashboard');
+              }}
+            >
+              Customer
+            </Button>
+          </div>
         </div>
       </Card>
     </div>
