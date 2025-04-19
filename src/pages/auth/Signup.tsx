@@ -1,57 +1,49 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Eye, EyeOff, Mail, User, Lock } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 const Signup = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  const [userType, setUserType] = useState<'farmer' | 'customer' | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    phone: '',
+    agreeTerms: false
+  });
+
+  useEffect(() => {
+    // Get user type from localStorage
+    const storedUserType = localStorage.getItem('userType') as 'farmer' | 'customer' | null;
+    if (!storedUserType) {
+      // If no user type selected, redirect to selection page
+      navigate('/auth/user-type');
+    } else {
+      setUserType(storedUserType);
+    }
+  }, [navigate]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // In a real application, you would handle registration here
+    console.log('Signup attempt:', { ...formData, userType });
     
-    if (!username || !email || !password || !confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (password !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Get user type from localStorage (set from UserTypeSelection page)
-    const userType = localStorage.getItem('userType') || 'customer';
-    
-    // Save username for welcome message
-    localStorage.setItem('username', username);
-    
-    // In a real app, this would register the user with a server
-    toast({
-      title: "Account created",
-      description: "Your account has been successfully created!",
-    });
-    
-    // Redirect based on user type
+    // Redirect to appropriate onboarding
     if (userType === 'farmer') {
       navigate('/farmer/onboarding');
     } else {
@@ -59,125 +51,156 @@ const Signup = () => {
     }
   };
 
-  const toggleShowPassword = () => {
+  const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const toggleShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md p-8">
-        <div className="flex justify-center mb-6">
-          <Link to="/">
-            <img src="/logo.svg" alt="Farmandi" className="h-12 w-12" />
-          </Link>
-        </div>
-        
-        <h2 className="text-center text-2xl font-bold text-gray-900 mb-2">Create an Account</h2>
-        <p className="text-center text-gray-600 mb-6">Join our community of farmers and customers</p>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <Label htmlFor="username">Username</Label>
-            <div className="relative mt-1">
-              <Input 
-                id="username" 
-                type="text" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-                placeholder="Choose a username"
-                className="block w-full pl-10" 
-                required
-              />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" />
-              </div>
-            </div>
+    <div className="min-h-screen flex flex-col bg-farmandi-cream">
+      <div className="flex-grow flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gray-600"
+              onClick={() => navigate('/auth/user-type')}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Selection
+            </Button>
           </div>
-          
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <div className="relative mt-1">
-              <Input 
-                id="email" 
-                type="email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                placeholder="you@example.com"
-                className="block w-full pl-10" 
-                required
-              />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <div className="relative mt-1">
-              <Input 
-                id="password" 
-                type={showPassword ? "text" : "password"}
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                placeholder="Create a password"
-                className="block w-full pl-10 pr-10" 
-                required
-              />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
-              </div>
-              <button 
-                type="button" 
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
-                onClick={toggleShowPassword}
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </div>
-          </div>
-          
-          <div>
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <div className="relative mt-1">
-              <Input 
-                id="confirmPassword" 
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)} 
-                placeholder="Confirm your password"
-                className="block w-full pl-10 pr-10" 
-                required
-              />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
-              </div>
-              <button 
-                type="button" 
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
-                onClick={toggleShowConfirmPassword}
-              >
-                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </div>
-          </div>
-          
-          <Button type="submit" className="w-full">Create Account</Button>
-        </form>
-        
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link to="/auth/login" className="text-farmandi-green hover:text-farmandi-green-dark font-medium">
-              Sign in
+
+          <div className="text-center mb-8">
+            <Link to="/" className="inline-block">
+              <img src="/logo.svg" alt="Farmandi" className="h-16 w-16 mx-auto" />
             </Link>
-          </p>
+            <h1 className="text-2xl font-bold text-farmandi-brown mt-4">
+              Create Your {userType === 'farmer' ? 'Farmer' : 'Customer'} Account
+            </h1>
+            <p className="text-gray-600 mt-2">
+              {userType === 'farmer' 
+                ? 'Start selling your produce directly to customers'
+                : 'Get access to fresh produce directly from local farmers'}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-lg p-8 shadow-md">
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input 
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    placeholder="Your full name"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input 
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Your email address"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input 
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="Your phone number"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Input 
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      className="pr-10"
+                    />
+                    <button 
+                      type="button"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                      onClick={togglePasswordVisibility}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Password must be at least 8 characters long.
+                  </p>
+                </div>
+
+                <div className="flex items-start space-x-2 pt-2">
+                  <Checkbox 
+                    id="agreeTerms" 
+                    name="agreeTerms"
+                    checked={formData.agreeTerms}
+                    onCheckedChange={(checked) => 
+                      setFormData(prev => ({ ...prev, agreeTerms: checked as boolean }))
+                    }
+                    required
+                  />
+                  <Label htmlFor="agreeTerms" className="text-sm font-normal">
+                    I agree to the{' '}
+                    <Link to="/terms" className="text-farmandi-green hover:underline">
+                      Terms of Service
+                    </Link>{' '}
+                    and{' '}
+                    <Link to="/privacy" className="text-farmandi-green hover:underline">
+                      Privacy Policy
+                    </Link>
+                  </Label>
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full mt-2"
+                  variant={userType === 'farmer' ? 'farmer' : 'customer'}
+                  disabled={!formData.agreeTerms}
+                >
+                  Create Account
+                </Button>
+              </div>
+            </form>
+
+            <div className="mt-6 pt-6 border-t border-gray-100 text-center">
+              <p className="text-sm text-gray-600">
+                Already have an account?{' '}
+                <Link to="/auth/login" className="text-farmandi-green font-semibold hover:underline">
+                  Sign in
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
-      </Card>
+      </div>
+
+      <footer className="py-4 text-center text-sm text-gray-500">
+        &copy; {new Date().getFullYear()} Farmandi. All rights reserved.
+      </footer>
     </div>
   );
 };

@@ -1,26 +1,10 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
 
 const Hero = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
-
-  const handleSearch = () => {
-    if (!searchQuery.trim()) {
-      toast({
-        title: "Search query empty",
-        description: "Please enter a search term",
-      });
-      return;
-    }
-    
-    navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
-  };
-
   return (
     <section className="relative h-[70vh] min-h-[500px] bg-gradient-to-r from-farmandi-green/80 to-farmandi-brown/80 overflow-hidden">
       {/* Background Image with Overlay */}
@@ -51,22 +35,10 @@ const Hero = () => {
                 type="text" 
                 placeholder="Search for fresh produce..."
                 className="w-full px-4 py-3 pl-10 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-farmandi-green"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch();
-                  }
-                }}
               />
               <Search className="absolute left-3 top-3 text-gray-400" size={20} />
             </div>
-            <Button 
-              variant="farmer" 
-              size="lg" 
-              className="sm:w-auto w-full"
-              onClick={handleSearch}
-            >
+            <Button variant="farmer" size="lg" className="sm:w-auto w-full">
               Search
             </Button>
           </div>
@@ -74,7 +46,7 @@ const Hero = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Button asChild variant="customer" size="lg">
-              <Link to="/products" className="w-full sm:w-auto">
+              <Link to="/signup" className="w-full sm:w-auto">
                 Shop Now
               </Link>
             </Button>

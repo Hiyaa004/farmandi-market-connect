@@ -11,7 +11,7 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-4">
-              <img src="/logo.svg" alt="Farmandi" className="h-10 w-10" />
+              <img src="/logo.svg" alt="Farmandi" className="h-10" />
             </Link>
             <p className="text-sm mb-4">
               Connecting farmers directly to customers. 
@@ -56,8 +56,8 @@ const Footer = () => {
           <div className="col-span-1">
             <h3 className="font-semibold text-lg mb-4">For Customers</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/auth/login" className="hover:text-farmandi-gold transition">Sign In</Link></li>
-              <li><Link to="/auth/signup" className="hover:text-farmandi-gold transition">Create Account</Link></li>
+              <li><Link to="/login" className="hover:text-farmandi-gold transition">Sign In</Link></li>
+              <li><Link to="/signup" className="hover:text-farmandi-gold transition">Create Account</Link></li>
               <li><Link to="/help" className="hover:text-farmandi-gold transition">Help Center</Link></li>
               <li><Link to="/terms" className="hover:text-farmandi-gold transition">Terms & Policies</Link></li>
             </ul>
