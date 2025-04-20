@@ -6,7 +6,7 @@
       <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <text x="50%" y="50%" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" fill="url(#logoGradient)">
-    F
+  <text x="50%" y="50%" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="url(#logoGradient)" font-weight="bold">
+    Farmandi
   </text>
 </svg>

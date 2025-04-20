@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
+import { toast } from 'sonner';
 
 const products = [
   {
@@ -44,6 +45,13 @@ const products = [
 ];
 
 const FeaturedProducts = () => {
+  const navigate = useNavigate();
+
+  const handleAddToCart = (product: any) => {
+    // In a real app, we would add the product to a cart state or context
+    toast.success(`Added ${product.name} to cart!`);
+  };
+
   return (
     <section className="py-16 bg-gradient-to-b from-farmandi-cream to-white">
       <div className="container mx-auto px-6">
@@ -83,7 +91,11 @@ const FeaturedProducts = () => {
                     <Button variant="ghost" size="sm" className="text-farmandi-green hover:text-farmandi-green-dark">
                       <Link to={`/products/${product.id}`}>View</Link>
                     </Button>
-                    <Button variant="customer" size="sm">
+                    <Button 
+                      variant="customer" 
+                      size="sm" 
+                      onClick={() => handleAddToCart(product)}
+                    >
                       <ShoppingCart className="h-4 w-4 mr-1" /> Add
                     </Button>
                   </div>

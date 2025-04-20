@@ -1,11 +1,32 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Search, Heart, ShoppingBag, Camera, MapPin, Clock, Star, TrendingUp } from 'lucide-react';
+import { 
+  Search, Heart, ShoppingBag, Camera, MapPin, 
+  Clock, Star, TrendingUp 
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 const CustomerDashboard = () => {
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const handleNearbyFarms = () => {
+    toast.info("Finding farms near you...");
+    // In a real app, we would use geolocation to find nearby farms
+    setTimeout(() => {
+      navigate('/nearby-farms');
+    }, 1500);
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    toast.success(`Browsing ${category} products`);
+    navigate(`/products?category=${category.toLowerCase()}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Customer Dashboard Header */}
@@ -40,10 +61,18 @@ const CustomerDashboard = () => {
               />
               <Search className="absolute left-3 top-3 text-gray-400" size={20} />
             </div>
-            <Button variant="outline" className="bg-white text-farmandi-brown border-farmandi-brown flex gap-2 md:w-auto w-full">
+            <Button 
+              variant="outline" 
+              className="bg-white text-farmandi-brown border-farmandi-brown flex gap-2 md:w-auto w-full"
+              onClick={handleNearbyFarms}
+            >
               <MapPin className="h-4 w-4" /> Nearby Farms
             </Button>
-            <Button variant="customer" className="flex gap-2 md:w-auto w-full">
+            <Button 
+              variant="customer" 
+              className="flex gap-2 md:w-auto w-full"
+              onClick={() => navigate('/customer/quality-scanner')}
+            >
               <Camera className="h-4 w-4" /> Quality Scanner
             </Button>
           </div>
@@ -57,7 +86,11 @@ const CustomerDashboard = () => {
           <h2 className="text-xl font-semibold mb-6">Browse Categories</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {['Vegetables', 'Fruits', 'Dairy', 'Herbs', 'Grains', 'Organic'].map((category, index) => (
-              <Card key={index} className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
+              <Card 
+                key={index} 
+                className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => handleCategoryClick(category)}
+              >
                 <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${
                   index % 2 === 0 ? 'bg-farmandi-green/10' : 'bg-farmandi-brown/10'
                 }`}>
@@ -103,7 +136,13 @@ const CustomerDashboard = () => {
                   <p className="text-sm text-gray-500 mb-2">Sunrise Farms</p>
                   <div className="flex justify-between items-center">
                     <p className="font-semibold text-farmandi-brown">₹{(index + 2) * 25}/kg</p>
-                    <Button variant="customer" size="sm">Add to Cart</Button>
+                    <Button 
+                      variant="customer" 
+                      size="sm"
+                      onClick={() => toast.success(`Added to cart!`)}
+                    >
+                      Add to Cart
+                    </Button>
                   </div>
                 </div>
               </Card>
@@ -145,7 +184,13 @@ const CustomerDashboard = () => {
                       </span>
                     ))}
                   </div>
-                  <Button variant="outline" className="w-full md:w-auto">Visit Farm Store</Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full md:w-auto"
+                    onClick={() => navigate(`/farm-visit/${index + 1}`)}
+                  >
+                    Visit Farm Store
+                  </Button>
                 </div>
               </Card>
             ))}
@@ -162,7 +207,10 @@ const CustomerDashboard = () => {
                   Use our AI-powered quality scanner to check the freshness and quality of fruits and vegetables. 
                   Simply take a photo, and we'll analyze it for you.
                 </p>
-                <Button variant="customer">
+                <Button 
+                  variant="customer"
+                  onClick={() => navigate('/customer/quality-scanner')}
+                >
                   <Camera className="h-4 w-4 mr-2" /> Open Scanner
                 </Button>
               </div>

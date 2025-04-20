@@ -23,10 +23,13 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
 import CropAnalysis from "./pages/farmer/CropAnalysis";
 import FarmerOnboarding from "./pages/farmer/FarmerOnboarding";
+import AllProducts from "./pages/farmer/AllProducts";
 
 // Customer Pages
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import QualityScanner from "./pages/customer/QualityScanner";
+import NearbyFarms from "./pages/customer/NearbyFarms";
+import FarmVisit from "./pages/customer/FarmVisit";
 
 const queryClient = new QueryClient();
 
@@ -66,10 +69,13 @@ const App = () => {
             <Route path="/farmer/crop-analysis" element={<CropAnalysis />} />
             <Route path="/farmer/onboarding" element={<FarmerOnboarding />} />
             <Route path="/farmer/register" element={<FarmerOnboarding />} />
+            <Route path="/farmer/products" element={<AllProducts />} />
             
             {/* Customer Routes */}
             <Route path="/customer/dashboard" element={<CustomerDashboard />} />
             <Route path="/customer/quality-scanner" element={<QualityScanner />} />
+            <Route path="/nearby-farms" element={<NearbyFarms />} />
+            <Route path="/farm-visit/:id" element={<FarmVisit />} />
             
             {/* Catch All */}
             <Route path="*" element={<NotFound />} />
