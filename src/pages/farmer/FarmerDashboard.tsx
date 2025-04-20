@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ import { SalesOverviewChart } from '@/components/charts/SalesOverviewChart';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { CropAnalysisChart } from '@/components/charts/CropAnalysisChart';
 
 const FarmerDashboard = () => {
   const navigate = useNavigate();
@@ -259,45 +259,11 @@ const FarmerDashboard = () => {
                 <Filter className="h-4 w-4 mr-2" /> Analyze
               </Button>
             </div>
-            
-            <div className="flex justify-center items-center h-48 mb-4">
-              <PieChart className="h-8 w-8 text-gray-400" />
-              <span className="ml-2 text-gray-500">Crop distribution chart</span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center text-sm">
-                <span className="flex items-center">
-                  <span className="h-3 w-3 rounded-full bg-farmandi-green mr-2"></span>
-                  Tomatoes
-                </span>
-                <span>45%</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="flex items-center">
-                  <span className="h-3 w-3 rounded-full bg-farmandi-brown mr-2"></span>
-                  Potatoes
-                </span>
-                <span>25%</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="flex items-center">
-                  <span className="h-3 w-3 rounded-full bg-blue-500 mr-2"></span>
-                  Onions
-                </span>
-                <span>15%</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="flex items-center">
-                  <span className="h-3 w-3 rounded-full bg-amber-500 mr-2"></span>
-                  Others
-                </span>
-                <span>15%</span>
-              </div>
-            </div>
-            <Button variant="outline" className="w-full mt-6">
-              <Link to="/farmer/crop-analysis">Detailed Crop Analysis</Link>
-            </Button>
-          </Card>
+          
+          <div className="flex justify-center items-center h-48 mb-4">
+            {selectedState && <CropAnalysisChart selectedState={selectedState} />}
+          </div>
+        </Card>
 
           <Card className="p-6 col-span-1 lg:col-span-3">
             <div className="flex justify-between items-center mb-6">

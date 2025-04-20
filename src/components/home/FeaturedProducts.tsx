@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -48,8 +47,11 @@ const FeaturedProducts = () => {
   const navigate = useNavigate();
 
   const handleAddToCart = (product: any) => {
-    // In a real app, we would add the product to a cart state or context
     toast.success(`Added ${product.name} to cart!`);
+  };
+
+  const handleViewProduct = (productId: number) => {
+    navigate(`/products/${productId}`);
   };
 
   return (
@@ -88,8 +90,13 @@ const FeaturedProducts = () => {
                     <p>Location: {product.location}</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" className="text-farmandi-green hover:text-farmandi-green-dark">
-                      <Link to={`/products/${product.id}`}>View</Link>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-farmandi-green hover:text-farmandi-green-dark"
+                      onClick={() => handleViewProduct(product.id)}
+                    >
+                      View
                     </Button>
                     <Button 
                       variant="customer" 
